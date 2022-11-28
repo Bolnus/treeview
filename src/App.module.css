@@ -1,0 +1,11 @@
+@import "./index.css";
+
+.App
+{
+    /*margin: 2% 10% 2% 10%;*/
+    /*box-sizing: border-box;*/
+    height: 94%;
+    width: 80%;
+    background: var(--mainColor);
+}
+
