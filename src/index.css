@@ -2,10 +2,30 @@
 {
     --mainColor: #555556;
     --bgColor: #222226;
-    --fontColorFirm: black;
+    --bgColorTransparent: #22222680;
+    --fontColorFirm: white;
     --fontColorLight: grey;
     --darkToggleColor: grey;
     --checkBoxColor: #ebcdb5;
+    --subColorLightGrey: #c4ccce;
+
+    /*--fontSizeSmaller: 14px;*/
+    --fontSizeSmall: 20px;
+    --fontSizeMedium: 25px;
+    --fontSizeLarge: 40px;
+    --fontSizeLargest: 50px;
+}
+
+@media all and (max-height: 1000px)
+{
+    :root
+    {
+        /*--fontSizeSmaller: 14px;*/
+        --fontSizeSmall: 14px;
+        --fontSizeMedium: 20px;
+        --fontSizeLarge: 30px;
+        --fontSizeLargest: 40px;
+    }
 }
 
 body
@@ -16,6 +36,7 @@ body
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: var(--bgColor);
 }
 
 code
@@ -32,4 +53,51 @@ code
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+::-webkit-scrollbar
+{
+    background: var(--bgColor);
+}
+
+::-webkit-scrollbar-track
+{
+    background: var(--bgColor);
+    width: 3px;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background: var(--mainColor);
+}
+
+::-webkit-scrollbar-corner
+{
+    background: var(--bgColor);
+}
+
+.commonInput
+{
+    border: none;
+    outline: none;
+    background: var(--subColorLightGrey);
+    color: black;
+}
+
+.commonInput:focus
+{
+    border: none;
+    outline: none;
+}
+
+.pushButton
+{
+    /*background: var(--mainColor);*/
+    color: white;
+    border: none;
+}
+
+.pushButton:hover
+{
+    cursor: pointer;
 }

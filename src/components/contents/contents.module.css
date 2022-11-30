@@ -1,0 +1,95 @@
+@import "../../index.css";
+
+.contentsWrapper
+{
+    background: var(--mainColor);
+    /*width: 80%;*/
+    /*height: 100%;*/
+    color: var(--fontColorFirm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-basis: 5px;
+}
+
+.contentsHeader
+{
+    background: var(--bgColor);
+    height: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+.contentsHeader input
+{
+    font-size: var(--fontSizeSmall);
+    width: 80%;
+    margin-top: 0.5em;
+    padding: 0.5em;
+    border-radius: 3px;
+}
+
+/*@media all and (max-height: 1000px)*/
+/*{*/
+/*    .contentsHeader input*/
+/*    {*/
+/*        font-size: var(--fontSizeSmaller);*/
+/*    }*/
+/*}*/
+
+.navBar
+{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    flex-grow: 0.5;
+}
+
+.navBar div
+{
+    flex-grow: 1;
+    text-align: center;
+    font-size: var(--fontSizeMedium);
+}
+
+.navBar div:hover
+{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.navTab_selected
+{
+    /*border: 2px solid grey;*/
+    border-bottom: none;
+    background: var(--mainColor);
+}
+
+.contentsBlock
+{
+    width: 100%;
+    flex: 1 1 auto;
+}
+
+.contentsFooter
+{
+    height: 5%;
+    width: 100%;
+    /*box-sizing: border-box;*/
+    display: flex;
+    justify-content: flex-end;
+}
+
+.contentsFooter button
+{
+    font-size: var(--fontSizeSmall);
+    margin: 0.5em;
+    border-radius: 3px;
+    background: var(--bgColor);
+}

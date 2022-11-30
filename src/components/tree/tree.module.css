@@ -1,0 +1,86 @@
+@import "../../index.css";
+
+.treeWrapper
+{
+    background: var(--bgColor);
+    /*flex-grow: 1;*/
+    /*flex-shrink: 1;*/
+    /*max-width: 100%;*/
+    /*height: 100%;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.treeHeader
+{
+    height: 10%;
+    border-bottom: 3px solid var(--mainColor);
+    box-shadow: 0 20px 0 0 var(--bgColorTransparent);
+    width: 80%;
+}
+
+.treeBlock
+{
+    flex-grow: 1;
+    overflow: scroll;
+    width: 100%;
+    color: var(--fontColorFirm);
+    align-self: start;
+}
+
+.treeFooter
+{
+    height: 5%;
+    border-top: 3px solid var(--mainColor);
+    width: 80%;
+}
+
+ul
+{
+    list-style: none;
+    padding-left: 1em;
+}
+
+li:hover
+{
+
+    cursor: pointer;
+}
+
+
+
+.listItem
+{
+    user-select: none;
+    white-space: nowrap;
+    font-size: var(--fontSizeSmall);
+}
+
+.listItem__name:hover
+{
+    opacity: 0.5;
+}
+
+.listItem__name_selected
+{
+    /*opacity: 0.5;*/
+    background: var(--mainColor);
+    border-radius: 3px;
+    padding: 0 3px 0 3px;
+}
+
+.listItem__name_dir::before
+{
+    content: "📁 ";
+}
+
+.listItem__name_file::before
+{
+    content: "📄 ";
+}
+
+.listItem__name_root::before
+{
+    content: "🔒 ";
+}
