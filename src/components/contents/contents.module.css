@@ -79,17 +79,55 @@
 
 .contentsFooter
 {
-    height: 5%;
+    /*height: 5%;*/
+    height: min-content;
     width: 100%;
     /*box-sizing: border-box;*/
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+}
+
+.contentsFooter__inputWrapper
+{
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    justify-self: flex-start;
+    
+}
+
+.contentsFooter__inputWrapper input
+{
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+.contentsFooter__inputWrapper span
+{
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    font-size: var(--fontSizeSmall);
+    margin: 0.5em;
+    padding: 0.5em;
+    
+    /*height: 100%;*/
+    border-radius: 3px;
+    background: var(--bgColor);
 }
 
 .contentsFooter button
 {
     font-size: var(--fontSizeSmall);
     margin: 0.5em;
+    padding: 0.5em;
     border-radius: 3px;
     background: var(--bgColor);
+    /*height: 100%;*/
 }

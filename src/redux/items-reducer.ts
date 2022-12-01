@@ -101,7 +101,7 @@ let initialState: ItemsState = {
     itemsTree: [
         {
             id: 0,
-            name: "string",
+            name: "disk",
             isDirectory: true,
             childIDs: [1,2,6,7,11],
             commonOptions: getDefaultCommonOptions(),
@@ -110,7 +110,7 @@ let initialState: ItemsState = {
         },
         {
             id: 1,
-            name: "string",
+            name: "bin",
             isDirectory: true,
             childIDs: [3,4,5],
             commonOptions: getDefaultCommonOptions(),
@@ -119,7 +119,7 @@ let initialState: ItemsState = {
         },
         {
             id: 2,
-            name: "string",
+            name: "dev",
             isDirectory: true,
             childIDs: [],
             commonOptions: getDefaultCommonOptions(),
@@ -155,7 +155,7 @@ let initialState: ItemsState = {
         },
         {
             id: 6,
-            name: "string",
+            name: "lib",
             isDirectory: true,
             childIDs: [8],
             commonOptions: getDefaultCommonOptions(),
@@ -164,16 +164,16 @@ let initialState: ItemsState = {
         },
         {
             id: 7,
-            name: "string",
+            name: "usr",
             isDirectory: true,
-            childIDs: [9],
+            childIDs: [9,12,13],
             commonOptions: getDefaultCommonOptions(),
             rulesOptions: getDefaultRulesOptions(),
             details: ""
         },
         {
             id: 8,
-            name: "string",
+            name: "shpo",
             isDirectory: true,
             childIDs: [10],
             commonOptions: getDefaultCommonOptions(),
@@ -207,17 +207,62 @@ let initialState: ItemsState = {
             rulesOptions: getDefaultRulesOptions(),
             details: ""
         },
+        {
+            id: 12,
+            name: "lib",
+            isDirectory: true,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
+        {
+            id: 13,
+            name: "share",
+            isDirectory: true,
+            childIDs: [14,15],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
+        {
+            id: 14,
+            name: "apps",
+            isDirectory: true,
+            childIDs: [16],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
+        {
+            id: 15,
+            name: "icons",
+            isDirectory: true,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
+        {
+            id: 16,
+            name: "shpo.desktop",
+            isDirectory: false,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
     ],
     currentItem: {
         id: -1,
-        name: "string.txt",
+        name: "",
         isDirectory: false,
         childIDs: [],
         commonOptions: getDefaultCommonOptions(),
         rulesOptions: getDefaultRulesOptions(),
         details: ""
     },
-    currentPath: "/home/astra",
+    currentPath: "",
     usersList: ["vladislav","astra","root"],
     groupsList: ["vladislav","astra","root","sudoers","high integrity","low integrity"]
 }
@@ -389,7 +434,12 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
         newState.itemsTree = [...state.itemsTree];
         newState.itemsTree[newState.currentItem.id] = {...newState.currentItem};
         newState.itemsTree[newState.currentItem.id].commonOptions = {...newState.currentItem.commonOptions};
+        newState.itemsTree[newState.currentItem.id].commonOptions.changeTime = (new Date()).toLocaleString();
         newState.itemsTree[newState.currentItem.id].rulesOptions = {...newState.currentItem.rulesOptions};
+
+        newState.currentItem = {...newState.currentItem};
+        newState.currentItem.id = -1;
+        newState.currentItem.name = "";
         return newState;
     default:
         return state;

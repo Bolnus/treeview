@@ -6,7 +6,8 @@ import {saveCurrentItemAC} from "../../redux/items-reducer";
 function mapStateToProps(state: RootState): StateProps
 {
     return {
-        currentPath: state.items.currentPath
+        currentPath: state.items.currentPath,
+        currentItem: state.items.currentItem
     }
 }
 
