@@ -1,5 +1,6 @@
 const SET_CURRENT_ITEM = "SET_CURRENT_ITEM";
-const SET_DIRECTORY_OPENED = "SET_DIRECTORY_STATE";
+const LOAD_CURRENT_ITEM = "LOAD-CURRENT-ITEM";
+const SET_DIRECTORY_OPENED = "SET-DIRECTORY-STATE";
 const UPDATE_NAME = "UPDATE-NAME";
 const UPDATE_OWNER = "UPDATE-OWNER";
 const UPDATE_GROUP = "UPDATE_GROUP";
@@ -8,6 +9,7 @@ const UPDATE_SUID_BIT = "UPDATE-SUID-BIT";
 const UPDATE_SGID_BIT = "UPDATE-SGID-BIT";
 const UPDATE_DETAILS = "UPDATE-DETAILS";
 const SAVE_CURRENT_ITEM = "SAVE-CURRENT-ITEM";
+const UPDATE_STATUS = "UPDATE-STATUS";
 
 export interface CommonOptions
 {
@@ -51,13 +53,15 @@ export interface ItemInterface
     details: string
 }
 
-type NestableItemsInterface = ItemInterface | { [k: string]: NestableItemsInterface }
+//type NestableItemsInterface = ItemInterface | { [k: string]: NestableItemsInterface }
 
 interface ItemsState
 {
     itemsTree: ItemInterface[]
     currentItem: ItemInterface
     currentPath: string
+    currentTabNumber: number
+    status: string
     usersList: string[]
     groupsList: string[]
 }
@@ -71,6 +75,8 @@ function getDefaultCommonOptions(): CommonOptions
         size: "1 KB" //rand
     }
 }
+
+
 
 function getDefaultRulesOptions(): RulesOptions
 {
@@ -263,6 +269,8 @@ let initialState: ItemsState = {
         details: ""
     },
     currentPath: "",
+    status: "...",
+    currentTabNumber: 3,
     usersList: ["vladislav","astra","root"],
     groupsList: ["vladislav","astra","root","sudoers","high integrity","low integrity"]
 }
@@ -348,7 +356,21 @@ export function saveCurrentItemAC()
     } as const;
 }
 
-//export function set
+export function updateStatusAC(text: string)
+{
+    return {
+        type: UPDATE_STATUS,
+        text: text
+    } as const;
+}
+
+export function loadCurrentItemAC(loadedItem: ItemInterface)
+{
+    return {
+        type: LOAD_CURRENT_ITEM,
+        loadedItem: loadedItem
+    } as const;
+}
 
 type ActionTypes = ReturnType<typeof updateNameAC> |
     ReturnType<typeof setCurrentItemAC> |
@@ -359,11 +381,13 @@ type ActionTypes = ReturnType<typeof updateNameAC> |
     ReturnType<typeof updateSUIDAC> |
     ReturnType<typeof updateDetailsAC> |
     ReturnType<typeof saveCurrentItemAC> |
+    ReturnType<typeof updateStatusAC> |
+    ReturnType<typeof loadCurrentItemAC> |
     ReturnType<typeof setDirectoryStateAC>;
 
 
-    // ReturnType<typeof updateLineCupsAC> |
-    // ReturnType<typeof updateLineCleaningsAC> |
+
+
     // ReturnType<typeof updateStatusAC> |
     // ReturnType<typeof updateLineMachineAC> |
     // ReturnType<typeof setFetchingStateAC> |
@@ -440,6 +464,16 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
         newState.currentItem = {...newState.currentItem};
         newState.currentItem.id = -1;
         newState.currentItem.name = "";
+        return newState;
+    case UPDATE_STATUS:
+        newState = {...state};
+        newState.status = action.text;
+        return newState;
+    case LOAD_CURRENT_ITEM:
+        newState = {...state};
+        newState.currentItem = {...action.loadedItem};
+        newState.currentItem.rulesOptions = {...action.loadedItem.rulesOptions};
+        newState.currentItem.commonOptions = {...action.loadedItem.commonOptions};
         return newState;
     default:
         return state;

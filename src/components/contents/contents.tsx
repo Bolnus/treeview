@@ -9,12 +9,16 @@ import {ItemInterface} from "../../redux/items-reducer";
 export interface DispatchProps
 {
     saveItem: Function
+    updateStatus: Function
+    loadCurrentItem: Function
 }
 
 export interface StateProps
 {
     currentPath: string
     currentItem: ItemInterface
+    status: string
+    //currentTab: number
 }
 
 type Props = StateProps & DispatchProps;
@@ -52,6 +56,31 @@ function onExportClicked( currentItem: ItemInterface)
     element.click();
 }
 
+function handleJSONContents(updateStatus: Function,loadCurrentItem: Function, event: ProgressEvent<FileReader>)
+{
+
+}
+
+function onFileInputChanged(updateStatus: Function,loadCurrentItem: Function, event: React.FormEvent)
+{
+    let inputElement = event.target as HTMLInputElement;
+    if(inputElement.files)
+    {
+        if(inputElement.files.length)
+        {
+            let fileName: string = inputElement.files[0].name;
+            console.log(fileName);
+            const reader = new FileReader();
+            reader.onload = handleJSONContents.bind(null,updateStatus,loadCurrentItem);
+            //reader.readAsText(fileObj);
+        }
+        else
+            updateStatus("Файл не выбран");
+    }
+    else
+        updateStatus("Файл не выбран");
+}
+
 export function Contents(props: Props)
 {
     let [currentTab,setCurrentTab] = React.useState<number>(0);
@@ -71,11 +100,10 @@ export function Contents(props: Props)
             {currentTab===3 ? <div className={classes.contentsBlock}/>: null}
             <div className={classes.contentsFooter}>
                 <label className={classes.contentsFooter__inputWrapper}>
-                    <input type="file" accept=".json" />
-                    <span className={` pushButton`}>Выберите файл</span>
+                    <input type="file" accept=".json" onChange={onFileInputChanged.bind(null,props.updateStatus,props.loadCurrentItem)}/>
+                    <span className={` pushButton`}>⬆ Импортировать</span>
                 </label>
-
-                <button className="pushButton">⬆ Импортировать</button>
+                <span className={classes.contentsFooter__status}>{props.status}</span>
                 {/*<a href="#">*/}
                 <button onClick={onExportClicked.bind(null,props.currentItem)} className="pushButton">⬇ Экспортировать</button>
                 {/*</a>*/}

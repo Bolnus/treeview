@@ -97,6 +97,13 @@
     
 }
 
+.contentsFooter__status
+{
+    flex-grow: 1;
+    margin: 0.5em;
+    /*text-align: center;*/
+}
+
 .contentsFooter__inputWrapper input
 {
     position: absolute;
