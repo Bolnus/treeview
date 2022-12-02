@@ -56,13 +56,82 @@ function onExportClicked( currentItem: ItemInterface)
     element.click();
 }
 
-function handleJSONContents(updateStatus: Function,loadCurrentItem: Function, event: ProgressEvent<FileReader>)
+// function isItemInterface(obj: any,key: string): obj is ItemInterface
+// {
+//     return obj[key] !== undefined;
+// }
+
+function handleJSONContents(updateStatus: Function,loadCurrentItem: Function, currentItem: ItemInterface, event: ProgressEvent<FileReader>)
 {
+    //let fileText: string = //String(event.target.result);
+    //debugger;
+    let fileReader = event.target as FileReader;
+    let frResult: string = String( fileReader.result);
+    if(frResult)
+    {
+        let objectSrc: any = JSON.parse(frResult);
+
+        for (const [keyCurrent, valueCurrent] of Object.entries(currentItem))
+        {
+            //console.log(`${key}: ${value}`); //isItemInterface(objectSrc,key)&&
+            let propertyFound: boolean = false;
+            for (const [keySrc, valueSrc] of Object.entries(objectSrc))
+            {
+                if(keyCurrent===keySrc)
+                {
+                    propertyFound=true;
+                    break;
+                }
+            }
+            if(!propertyFound)
+            {
+                updateStatus("Не найдено свойство "+keyCurrent);
+                return;
+            }
+        }
+        try
+        {
+            console.log(objectSrc.rulesOptions.permissionsArray);
+            let loadedItem: ItemInterface = {
+                id: currentItem.id,
+                name: objectSrc.name,
+                isDirectory: currentItem.isDirectory,
+                childIDs: [...objectSrc.childIDs],
+                commonOptions: {
+                    creationTime: objectSrc.commonOptions.creationTime,
+                    changeTime: objectSrc.commonOptions.changeTime,
+                    size: objectSrc.commonOptions.size
+                },
+                rulesOptions: {
+                    owner: objectSrc.rulesOptions.owner,
+                    group: objectSrc.rulesOptions.group,
+
+                    permissionsArray: [...objectSrc.rulesOptions.permissionsArray],
+                    suidBit: objectSrc.rulesOptions.suidBit,
+                    sgidBit: objectSrc.rulesOptions.sgidBit
+                },
+                details: objectSrc.details
+            };
+            loadCurrentItem(loadedItem);
+        }
+        catch(error)
+        {
+            updateStatus("Ошибка парсинга файла");
+            console.log(error);
+        }
+    }
+    else
+        updateStatus("Ошибка чтения файла");
 
 }
 
-function onFileInputChanged(updateStatus: Function,loadCurrentItem: Function, event: React.FormEvent)
+function onFileInputChanged(updateStatus: Function,loadCurrentItem: Function, currentItem: ItemInterface, event: React.FormEvent)
 {
+    if(currentItem.id<0)
+    {
+        updateStatus("Не выбран элемент для изменения!");
+        return;
+    }
     let inputElement = event.target as HTMLInputElement;
     if(inputElement.files)
     {
@@ -71,8 +140,8 @@ function onFileInputChanged(updateStatus: Function,loadCurrentItem: Function, ev
             let fileName: string = inputElement.files[0].name;
             console.log(fileName);
             const reader = new FileReader();
-            reader.onload = handleJSONContents.bind(null,updateStatus,loadCurrentItem);
-            //reader.readAsText(fileObj);
+            reader.onload = handleJSONContents.bind(null,updateStatus,loadCurrentItem,currentItem);
+            reader.readAsText(inputElement.files[0]);
         }
         else
             updateStatus("Файл не выбран");
@@ -85,6 +154,12 @@ export function Contents(props: Props)
 {
     let [currentTab,setCurrentTab] = React.useState<number>(0);
     //let navigate = useNavigate();
+    if(props.status)
+    {
+        setTimeout(function() {
+            props.updateStatus("");
+        }, 3000);
+    }
 
     return (
         <div className={classes.contentsWrapper}>
@@ -100,7 +175,7 @@ export function Contents(props: Props)
             {currentTab===3 ? <div className={classes.contentsBlock}/>: null}
             <div className={classes.contentsFooter}>
                 <label className={classes.contentsFooter__inputWrapper}>
-                    <input type="file" accept=".json" onChange={onFileInputChanged.bind(null,props.updateStatus,props.loadCurrentItem)}/>
+                    <input type="file" accept=".json" onChange={onFileInputChanged.bind(null,props.updateStatus,props.loadCurrentItem,props.currentItem)}/>
                     <span className={` pushButton`}>⬆ Импортировать</span>
                 </label>
                 <span className={classes.contentsFooter__status}>{props.status}</span>

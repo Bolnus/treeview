@@ -1,4 +1,4 @@
-import React, {ReactFragment} from "react";
+import React from "react";
 import classes from "./options.module.css"
 
 export interface StateProps

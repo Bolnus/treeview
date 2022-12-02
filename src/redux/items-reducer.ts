@@ -62,13 +62,14 @@ interface ItemsState
     currentPath: string
     currentTabNumber: number
     status: string
+    fileName: string
     usersList: string[]
     groupsList: string[]
 }
 
 function getDefaultCommonOptions(): CommonOptions
 {
-    let date = new Date();
+    let date: Date = new Date();
     return {
         creationTime: date.toLocaleString(),
         changeTime: date.toLocaleString(),
@@ -270,6 +271,7 @@ let initialState: ItemsState = {
     },
     currentPath: "",
     status: "...",
+    fileName: "",
     currentTabNumber: 3,
     usersList: ["vladislav","astra","root"],
     groupsList: ["vladislav","astra","root","sudoers","high integrity","low integrity"]
