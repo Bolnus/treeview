@@ -8,11 +8,23 @@ export interface StateProps
     rootItem: ItemInterface
 }
 
-export function Tree(props: StateProps)
+export interface DispatchProps
+{
+    generateItemsTree: Function
+}
+
+type Props = StateProps & DispatchProps;
+
+function onGenerateClicked(generateItemsTree: Function)
+{
+    generateItemsTree();
+}
+
+export function Tree(props: Props)
 {
     return (
         <div className={classes.treeWrapper}>
-            <div className={classes.treeHeader}></div>
+            <div className={classes.treeHeader}/>
             <div className={classes.treeBlock}>
                 <ul>
                     <li className={classes.listItem}>
@@ -20,7 +32,9 @@ export function Tree(props: StateProps)
                     </li>
                 </ul>
             </div>
-            <div className={classes.treeFooter}></div>
+            <div className={classes.treeFooter}>
+                <button onClick={onGenerateClicked.bind(null,props.generateItemsTree)} className={`pushButton ${classes.treeFooter__pb}`}>🛠 Сгенерировать</button>
+            </div>
         </div>
     )
 }

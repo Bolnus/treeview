@@ -1,3 +1,5 @@
+import {faker} from '@faker-js/faker';
+
 const SET_CURRENT_ITEM = "SET_CURRENT_ITEM";
 const LOAD_CURRENT_ITEM = "LOAD-CURRENT-ITEM";
 const SET_DIRECTORY_OPENED = "SET-DIRECTORY-STATE";
@@ -10,6 +12,9 @@ const UPDATE_SGID_BIT = "UPDATE-SGID-BIT";
 const UPDATE_DETAILS = "UPDATE-DETAILS";
 const SAVE_CURRENT_ITEM = "SAVE-CURRENT-ITEM";
 const UPDATE_STATUS = "UPDATE-STATUS";
+const UPDATE_FILE_NAME = "UPDATE-FILE-NAME";
+const SET_CURRENT_TAB = "SET-CURRENT-TAB";
+const GENERATE_TREE = "GENERATE-TREE";
 
 export interface CommonOptions
 {
@@ -53,6 +58,12 @@ export interface ItemInterface
     details: string
 }
 
+export interface StatusBar
+{
+    statusText: string
+    isError: boolean
+}
+
 //type NestableItemsInterface = ItemInterface | { [k: string]: NestableItemsInterface }
 
 interface ItemsState
@@ -61,7 +72,7 @@ interface ItemsState
     currentItem: ItemInterface
     currentPath: string
     currentTabNumber: number
-    status: string
+    statusBar: StatusBar
     fileName: string
     usersList: string[]
     groupsList: string[]
@@ -73,7 +84,7 @@ function getDefaultCommonOptions(): CommonOptions
     return {
         creationTime: date.toLocaleString(),
         changeTime: date.toLocaleString(),
-        size: "1 KB" //rand
+        size: `${Math.floor(Math.random() * 1024)} KB` //rand
     }
 }
 
@@ -102,6 +113,42 @@ function getDefaultRulesOptions(): RulesOptions
         suidBit: false,
         sgidBit: false
     }
+}
+
+function generateItemsTree(): ItemInterface[]
+{
+    let tree: ItemInterface[] = [
+        {
+            id: 0,
+            name: "disk",
+            isDirectory: true,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        }
+    ]
+    //Boolean(Math.floor(Math.random() * 2))
+    for (let i = 1; i < 100; i++)
+    {
+        let parentId: number = 1;
+        if(i<=50)
+            parentId = Math.floor(Math.random() * i);
+        else
+            parentId = Math.floor(Math.random() * 50);
+        tree[i] = {
+            id: i,
+            name: i<=50 ? faker.lorem.word() : `${faker.word.noun()}.${faker.system.commonFileExt()}`,
+            isDirectory: i<=50,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: faker.lorem.sentence()
+        }
+        tree[parentId].childIDs.push(i);
+    }
+
+    return tree
 }
 
 let initialState: ItemsState = {
@@ -270,11 +317,14 @@ let initialState: ItemsState = {
         details: ""
     },
     currentPath: "",
-    status: "...",
+    statusBar: {
+        statusText: "...",
+        isError: false
+    },
     fileName: "",
     currentTabNumber: 3,
-    usersList: ["vladislav","astra","root"],
-    groupsList: ["vladislav","astra","root","sudoers","high integrity","low integrity"]
+    usersList: ["vladislav","astra","root","user"],
+    groupsList: ["vladislav","astra","root","sudoers","high integrity","low integrity","user"]
 }
 
 export function setCurrentItemAC(itemID: number,path: string)
@@ -358,11 +408,12 @@ export function saveCurrentItemAC()
     } as const;
 }
 
-export function updateStatusAC(text: string)
+export function updateStatusAC(text: string,isError: boolean)
 {
     return {
         type: UPDATE_STATUS,
-        text: text
+        text: text,
+        isError: isError
     } as const;
 }
 
@@ -371,6 +422,29 @@ export function loadCurrentItemAC(loadedItem: ItemInterface)
     return {
         type: LOAD_CURRENT_ITEM,
         loadedItem: loadedItem
+    } as const;
+}
+
+export function updateFileNameAC(fileName: string)
+{
+    return {
+        type: UPDATE_FILE_NAME,
+        fileName: fileName
+    } as const;
+}
+
+export function setCurrentTabAC(tabNumber: number)
+{
+    return {
+        type: SET_CURRENT_TAB,
+        tabNumber: tabNumber
+    } as const;
+}
+
+export function generateTreeAC()
+{
+    return {
+        type: GENERATE_TREE
     } as const;
 }
 
@@ -385,14 +459,13 @@ type ActionTypes = ReturnType<typeof updateNameAC> |
     ReturnType<typeof saveCurrentItemAC> |
     ReturnType<typeof updateStatusAC> |
     ReturnType<typeof loadCurrentItemAC> |
+    ReturnType<typeof updateFileNameAC> |
+    ReturnType<typeof setCurrentTabAC> |
+    ReturnType<typeof generateTreeAC> |
     ReturnType<typeof setDirectoryStateAC>;
 
 
 
-
-    // ReturnType<typeof updateStatusAC> |
-    // ReturnType<typeof updateLineMachineAC> |
-    // ReturnType<typeof setFetchingStateAC> |
     // ReturnType<typeof updateDTEditAC> |
     // ReturnType<typeof setCoffeeMachineListAC> |
     // ReturnType<typeof updateConsumablesRowAC> |
@@ -454,28 +527,56 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
         newState.currentItem.rulesOptions = {...state.itemsTree[action.itemID].rulesOptions};
         newState.currentItem.commonOptions = {...state.itemsTree[action.itemID].commonOptions};
         newState.currentPath = action.path;
+
+        newState.currentTabNumber = 0;
         return newState;
     case SAVE_CURRENT_ITEM:
         newState = {...state};
-        newState.itemsTree = [...state.itemsTree];
-        newState.itemsTree[newState.currentItem.id] = {...newState.currentItem};
-        newState.itemsTree[newState.currentItem.id].commonOptions = {...newState.currentItem.commonOptions};
-        newState.itemsTree[newState.currentItem.id].commonOptions.changeTime = (new Date()).toLocaleString();
-        newState.itemsTree[newState.currentItem.id].rulesOptions = {...newState.currentItem.rulesOptions};
+        newState.statusBar = {...state.statusBar};
+        if(newState.currentItem.id<0)
+        {
+            newState.statusBar.statusText = "Не выбран элемент для сохранения!";
+            newState.statusBar.isError = true;
+        }
+        else
+        {
+            newState.statusBar.statusText = "Сохранено";
+            newState.statusBar.isError = false;
 
-        newState.currentItem = {...newState.currentItem};
-        newState.currentItem.id = -1;
-        newState.currentItem.name = "";
+            newState.itemsTree = [...state.itemsTree];
+            newState.itemsTree[newState.currentItem.id] = {...newState.currentItem};
+            newState.itemsTree[newState.currentItem.id].commonOptions = {...newState.currentItem.commonOptions};
+            newState.itemsTree[newState.currentItem.id].commonOptions.changeTime = (new Date()).toLocaleString();
+            newState.itemsTree[newState.currentItem.id].rulesOptions = {...newState.currentItem.rulesOptions};
+        }
+
+        // newState.currentItem = {...newState.currentItem};
+        // newState.currentItem.id = -1;
+        // newState.currentItem.name = "";
+
         return newState;
     case UPDATE_STATUS:
         newState = {...state};
-        newState.status = action.text;
+        newState.statusBar = {...state.statusBar};
+        newState.statusBar.statusText = action.text;
+        newState.statusBar.isError = action.isError;
         return newState;
     case LOAD_CURRENT_ITEM:
         newState = {...state};
         newState.currentItem = {...action.loadedItem};
         newState.currentItem.rulesOptions = {...action.loadedItem.rulesOptions};
         newState.currentItem.commonOptions = {...action.loadedItem.commonOptions};
+        return newState;
+    case SET_CURRENT_TAB:
+        newState = {...state};
+        newState.currentTabNumber = action.tabNumber;
+        return newState;
+    case GENERATE_TREE:
+        newState = {...state};
+        newState.itemsTree = generateItemsTree();
+        newState.currentItem = {...state.currentItem};
+        newState.currentItem.id = -1;
+        newState.currentTabNumber = 3;
         return newState;
     default:
         return state;

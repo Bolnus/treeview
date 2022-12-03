@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-basis: 5px;
 }
 
 .treeHeader
@@ -27,13 +28,26 @@
     width: 100%;
     color: var(--fontColorFirm);
     align-self: start;
+    height: 0;
 }
 
 .treeFooter
 {
-    height: 5%;
+    height: min-content;
     border-top: 3px solid var(--mainColor);
     width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.treeFooter__pb
+{
+    background: var(--mainColor);
+    font-size: var(--fontSizeSmall);
+    margin: 0.5em;
+    padding: 0.5em;
+    border-radius: 3px;
 }
 
 ul
@@ -72,15 +86,15 @@ li:hover
 
 .listItem__name_dir::before
 {
-    content: "📁 ";
+    content: "📁";
 }
 
 .listItem__name_file::before
 {
-    content: "📄 ";
+    content: "📄";
 }
 
 .listItem__name_root::before
 {
-    content: "🔒 ";
+    content: "🔒";
 }

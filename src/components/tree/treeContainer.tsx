@@ -1,6 +1,7 @@
 import {connect} from "react-redux";
-import {RootState} from "../../redux/redux-store";
-import {StateProps, Tree} from "./tree";
+import {AppDispatch, RootState} from "../../redux/redux-store";
+import {DispatchProps, StateProps, Tree} from "./tree";
+import {generateTreeAC} from "../../redux/items-reducer";
 
 
 function mapStateToProps(state: RootState): StateProps
@@ -10,4 +11,14 @@ function mapStateToProps(state: RootState): StateProps
     }
 }
 
-export const TreeContainer = connect(mapStateToProps)(Tree);
+function mapDispatchToProps(dispatch: AppDispatch): DispatchProps
+{
+    return {
+        generateItemsTree()
+        {
+            dispatch(generateTreeAC());
+        }
+    }
+}
+
+export const TreeContainer = connect(mapStateToProps,mapDispatchToProps)(Tree);
