@@ -4,7 +4,7 @@
 
 ## Функциональные задачи
 
-![app_view](https://github.com/Bolnus/treeview/blob/master/Screenshot_1.jpg?raw=true)
+![app_view](https://github.com/Bolnus/treeview/blob/master/Screenshot_1.png?raw=true)
 
 В левой части вывод файловой структуры. Кнопка Сгенерировать выполняет автоматическую генерацию 
 дерева на 100 случайных элементов.
