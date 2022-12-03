@@ -115,8 +115,10 @@ function getDefaultRulesOptions(): RulesOptions
     }
 }
 
-function generateItemsTree(): ItemInterface[]
+function generateItemsTree(totalItems: number,directoryItems: number): ItemInterface[]
 {
+    if(directoryItems>totalItems)
+        directoryItems=totalItems;
     let tree: ItemInterface[] = [
         {
             id: 0,
@@ -129,17 +131,17 @@ function generateItemsTree(): ItemInterface[]
         }
     ]
     //Boolean(Math.floor(Math.random() * 2))
-    for (let i = 1; i < 100; i++)
+    for (let i = 1; i < totalItems; i++)
     {
         let parentId: number = 1;
-        if(i<=50)
+        if(i<=directoryItems)
             parentId = Math.floor(Math.random() * i);
         else
-            parentId = Math.floor(Math.random() * 50);
+            parentId = Math.floor(Math.random() * directoryItems);
         tree[i] = {
             id: i,
-            name: i<=50 ? faker.lorem.word() : `${faker.word.noun()}.${faker.system.commonFileExt()}`,
-            isDirectory: i<=50,
+            name: i<=directoryItems ? faker.lorem.word() : `${faker.word.noun()}.${faker.system.commonFileExt()}`,
+            isDirectory: i<=directoryItems,
             childIDs: [],
             commonOptions: getDefaultCommonOptions(),
             rulesOptions: getDefaultRulesOptions(),
@@ -573,7 +575,7 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
         return newState;
     case GENERATE_TREE:
         newState = {...state};
-        newState.itemsTree = generateItemsTree();
+        newState.itemsTree = generateItemsTree(100,50);
         newState.currentItem = {...state.currentItem};
         newState.currentItem.id = -1;
         newState.currentTabNumber = 3;
