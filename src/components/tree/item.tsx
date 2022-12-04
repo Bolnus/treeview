@@ -53,6 +53,8 @@ function Item(props: Props)
 
     return (
         <div >
+            {/*<input type="checkbox"*/}
+            {/*       className={`${classes.listItem__checkBox} ${props.item.childIDs.length ? classes.listItem__checkBox_content : ""}`}/>*/}
             <span onClick={onItemClicked.bind(null,props.item.id,props.path,props.setCurrentItem)}
                   className={`${props.item.id===props.currentID ? classes.listItem__name_selected : classes.listItem__name} ${iconStyle}`}>{props.item.name}</span>
             <ul>

@@ -222,7 +222,7 @@ let initialState: ItemsState = {
             id: 7,
             name: "usr",
             isDirectory: true,
-            childIDs: [9,12,13],
+            childIDs: [12,13,9],
             commonOptions: getDefaultCommonOptions(),
             rulesOptions: getDefaultRulesOptions(),
             details: ""
@@ -256,9 +256,9 @@ let initialState: ItemsState = {
         },
         {
             id: 11,
-            name: "file",
-            isDirectory: false,
-            childIDs: [],
+            name: "var",
+            isDirectory: true,
+            childIDs: [17],
             commonOptions: getDefaultCommonOptions(),
             rulesOptions: getDefaultRulesOptions(),
             details: ""
@@ -302,6 +302,15 @@ let initialState: ItemsState = {
         {
             id: 16,
             name: "shpo.desktop",
+            isDirectory: false,
+            childIDs: [],
+            commonOptions: getDefaultCommonOptions(),
+            rulesOptions: getDefaultRulesOptions(),
+            details: ""
+        },
+        {
+            id: 17,
+            name: "settings.ini",
             isDirectory: false,
             childIDs: [],
             commonOptions: getDefaultCommonOptions(),
@@ -540,6 +549,11 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
             newState.statusBar.statusText = "Не выбран элемент для сохранения!";
             newState.statusBar.isError = true;
         }
+        else if(!newState.currentItem.name)
+        {
+            newState.statusBar.statusText = "Имя не может быть пустым!";
+            newState.statusBar.isError = true;
+        }
         else
         {
             newState.statusBar.statusText = "Сохранено";
@@ -551,10 +565,6 @@ export function itemsReducer(state: ItemsState = initialState, action: ActionTyp
             newState.itemsTree[newState.currentItem.id].commonOptions.changeTime = (new Date()).toLocaleString();
             newState.itemsTree[newState.currentItem.id].rulesOptions = {...newState.currentItem.rulesOptions};
         }
-
-        // newState.currentItem = {...newState.currentItem};
-        // newState.currentItem.id = -1;
-        // newState.currentItem.name = "";
 
         return newState;
     case UPDATE_STATUS:
